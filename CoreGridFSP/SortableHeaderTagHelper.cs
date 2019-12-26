@@ -29,7 +29,7 @@ namespace CoreGridFSP
         {
             //Make a copy of the routes so the changed values won't make it back out to the host page
             IDictionary<string, string> routes = new Dictionary<string, string>(Options.FilterList);
-            
+            routes.Add("pageSize", Options.PaginationOptions.PageSize.ToString());
             var propName = aspFor.Metadata.Name;
             var heading = aspFor.Metadata.DisplayName ?? propName;
 

@@ -46,7 +46,7 @@ namespace CoreGridFSP
             Dictionary<string, string> Routes = new Dictionary<string, string>(Options.FilterList);
             if (Options.SelectedSort != null)
                 Routes.Add("SelectedSort", Options.SelectedSort);
-
+            Routes.Add("pageSize", Options.PaginationOptions.PageSize.ToString());
             output.TagName = "div";
 
             output.Attributes.Add("class", "btn-group btn-group-sm");

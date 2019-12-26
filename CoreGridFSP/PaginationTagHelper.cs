@@ -26,6 +26,7 @@ namespace CoreGridFSP
             Dictionary<string, string> Routes = new Dictionary<string, string>(Options.FilterList);
             if (Options.SelectedSort != null)
                 Routes.Add("SelectedSort", Options.SelectedSort);
+            Routes.Add("pageSize", options.PageSize.ToString());
 
             output.TagName = "nav";
             output.Attributes.Add("aria-label", "Page navigation");
@@ -44,12 +45,83 @@ namespace CoreGridFSP
             ul.InnerHtml.AppendHtml(makeButton(">", "Previous", options.EnableNext, options.CurrentPage + 1, Routes));
             ul.InnerHtml.AppendHtml(makeButton(">|", "Last", options.EnableNext, options.TotalPages, Routes));
 
+
+            if (options.AllowedPageSizes != null && options.AllowedPageSizes.Length > 0)
+            {
+                ul.InnerHtml.AppendHtml(makePageSize(Routes));
+
+            }
             output.Content.SetHtmlContent(ul);
 
         }
-        private TagBuilder makeButton(string text, string ariaLabel, bool enabled, int pageNumber, Dictionary<string, string> routes)
+        private TagBuilder makePageSize(Dictionary<string, string> Routes)
         {
-            routes = new Dictionary<string, string>(routes);
+            var routes = new Dictionary<string, string>(Routes);
+
+            if (routes.ContainsKey("pageSize"))
+                routes["pageSize"] = Options.PaginationOptions.PageSize.ToString();
+            else
+                routes.Add("pageSize", Options.PaginationOptions.PageSize.ToString());
+
+            var li = new TagBuilder("li");
+            li.AddCssClass("page-item");
+
+            var btnPgSz = new TagBuilder("button");
+            btnPgSz.AddCssClass("btn");
+            btnPgSz.AddCssClass("btn-outline-secondary");
+            btnPgSz.Attributes.Add("type", "button");
+            btnPgSz.InnerHtml.Append("Page Size ");
+            int pageSize = Options.PaginationOptions.PageSize;
+            btnPgSz.InnerHtml.Append(pageSize==0?"All":pageSize.ToString());
+            li.InnerHtml.AppendHtml(btnPgSz);
+
+            var btnDD = new TagBuilder("button");
+            btnDD.AddCssClass("btn");
+            btnDD.AddCssClass("btn-outline-secondary");
+            btnDD.AddCssClass("dropdown-toggle");
+            btnDD.AddCssClass("dropdown-toggle-split");
+            btnDD.Attributes.Add("type", "button");
+            btnDD.Attributes.Add("data-toggle", "dropdown");
+            btnDD.Attributes.Add("aria-haspopup", "true");
+            btnDD.Attributes.Add("aria-expanded", "false");
+            var ddSpan = new TagBuilder("span");
+            ddSpan.AddCssClass("sr-only");
+            ddSpan.InnerHtml.Append("Toggle Dropdown");
+            btnDD.InnerHtml.AppendHtml(ddSpan);
+            li.InnerHtml.AppendHtml(btnDD);
+
+
+            var dropDown = new TagBuilder("div");
+            dropDown.AddCssClass("dropdown-menu");
+
+            if (Options.PaginationOptions.AllowAllPageSize)
+            {
+                routes["pageSize"] = "0";
+
+                var link = _generator.GenerateActionLink(ViewContext, "All", null, null, null, null, null, routes, null);
+                link.AddCssClass("dropdown-item");
+                link.AddCssClass("page-link");
+                link.Attributes.Add("aria-label", "All");
+                dropDown.InnerHtml.AppendHtml(link);
+            }
+            foreach(var size in Options.PaginationOptions.AllowedPageSizes)
+            {
+                routes["pageSize"] = size.ToString();
+
+                var link = _generator.GenerateActionLink(ViewContext, size.ToString(), null, null, null, null, null, routes, null);
+                link.AddCssClass("dropdown-item");
+                link.AddCssClass("page-link");
+                link.Attributes.Add("aria-label", size.ToString());
+                dropDown.InnerHtml.AppendHtml(link);
+            }
+
+            li.InnerHtml.AppendHtml(dropDown);
+            return li;
+
+        }
+        private TagBuilder makeButton(string text, string ariaLabel, bool enabled, int pageNumber, Dictionary<string, string> Routes)
+        {
+            var routes = new Dictionary<string, string>(Routes);
 
             if (routes.ContainsKey("currentPage"))
                 routes["currentPage"] = pageNumber.ToString();
