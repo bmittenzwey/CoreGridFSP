@@ -155,7 +155,7 @@ All examples are based on the [MVCMovies tutorial](https://docs.microsoft.com/en
 
 - [Index Get method](./documentation/examples/MoviesController.md)
 - [Index View Model](./documentation/examples/IndexViewModel.md)
-- [Index View](./documentation/examples/Index View.md)
+- [Index View](./documentation/examples/Index%20;View.md)
 
 
 # References
