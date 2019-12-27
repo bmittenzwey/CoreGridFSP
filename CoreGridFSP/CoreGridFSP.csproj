@@ -10,7 +10,7 @@
     <PackageTags>core MVC table grid sortable header sorting pagination page</PackageTags>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>CoreGridFSP.snk</AssemblyOriginatorKeyFile>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <RepositoryUrl>https://github.com/bmittenzwey/CoreGridFSP</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageIcon>CoreGridFSP.png</PackageIcon>

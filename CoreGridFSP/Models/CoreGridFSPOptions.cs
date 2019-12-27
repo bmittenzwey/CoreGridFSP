@@ -53,6 +53,6 @@ namespace CoreGridFSP.Models
         [Display(Name ="Selected Sort Direction", Description ="")]
         public SortableHeaderTagHelper.SortDirection SelectedSortDirection { get; set; }
         [Display(Name = "Filter List", Description ="KVP list of all filter keys and string converted values.")]
-        public Dictionary<string, string> FilterList { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> FilterList { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     }
 }

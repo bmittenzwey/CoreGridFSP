@@ -149,3 +149,14 @@ New CoreGridOptions will set a default page size and set of allowed page sizes. 
 | SelectedSortName | The name of the column to sort on |
 | SelectedSortDirection | Asc or Desc |
 | FilterList | Dictionary kvp list with all current filter values | 
+
+# Examples
+All examples are based on the [MVCMovies tutorial](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-mvc-app/start-mvc?view=aspnetcore-3.1&tabs=visual-studio) provided by Microsoft.
+
+- [Example Index Get method](.\documentation\examples\MoviesController.md)
+
+
+# References
+- [CoreGridFSP on NuGet](https://www.nuget.org/packages/CoreGridFSP/)
+- [CoreGridFSP Source on GitHub](https://github.com/bmittenzwey/CoreGridFSP) 
+- [Get Started with ASP.NET Core MVC](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-mvc-app/start-mvc?view=aspnetcore-3.1&tabs=visual-studio)
