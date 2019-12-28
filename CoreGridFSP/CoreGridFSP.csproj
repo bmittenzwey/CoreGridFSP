@@ -10,15 +10,14 @@
     <PackageTags>core MVC table grid sortable header sorting pagination page</PackageTags>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>CoreGridFSP.snk</AssemblyOriginatorKeyFile>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <RepositoryUrl>https://github.com/bmittenzwey/CoreGridFSP</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageIcon>CoreGridFSP.png</PackageIcon>
     <PackageIconUrl>https://github.com/bmittenzwey/CoreGridFSP/blob/master/CoreGridFSP/Resources/CoreGridFSP.png</PackageIconUrl>
-    <PackageReleaseNotes>Simplified filter handling - Not required to be on the view model
-Simplified the range filters - No more asp-for-end tag. Added suffixes
-Added examples and docs
-Fixed a few bugs</PackageReleaseNotes>
+    <PackageReleaseNotes>Added Extension methods
+ExtractCoreGridOptions - automatically generates options based off the HttpContext
+Fixed some bugs</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

@@ -5,55 +5,38 @@
         public async Task<IActionResult> Index(int? currentPage, int? movieGenre, DateTime? ReleaseDate_low, DateTime? ReleaseDate_high, decimal? Price_Low, decimal? Price_High, string title, int? pageSize, string selectedSort = "")
         {
             //Set up the CoreGridFSPOptions to be used for coordinating sorting, filtering and pagination
-            var gridOptions = new CoreGridFSPOptions()
-            {
-                PaginationOptions = new PaginationOptions()
-                {
-                    CurrentPage = currentPage.HasValue?currentPage.Value:1,                    
-                },
-                SelectedSort = selectedSort
-            };
-            if (pageSize.HasValue)
-                gridOptions.PaginationOptions.PageSize = pageSize.Value;
-            else
-                pageSize = gridOptions.PaginationOptions.PageSize;
-
-            //Add all filters to the list of routes
-            //Select List Example
-            if(movieGenre.HasValue)
-                gridOptions.FilterList.Add("movieGenre", movieGenre.Value.ToString());
-            //Date Range Example
-            if(ReleaseDate_low.HasValue)
-                gridOptions.FilterList.Add("ReleaseDate_low", ReleaseDate_low.Value.ToString("s"));
-            if(ReleaseDate_high.HasValue)
-                gridOptions.FilterList.Add("ReleaseDate_high", ReleaseDate_high.Value.ToString("s"));
-            //Numeric Range Example
-            if(Price_Low.HasValue)  
-                gridOptions.FilterList.Add("Price_Low", Price_Low.ToString());
-            if(Price_High.HasValue)
-                gridOptions.FilterList.Add("Price_High", Price_High.ToString());
-            //Simple Text Filter Example
-            if(!string.IsNullOrWhiteSpace(title))
-                gridOptions.FilterList.Add("title", title);
-         
-
+            var gridOptions = this.HttpContext.Request.ExtractCoreGridOptions();
+            
             // Use LINQ to get list of genres.
-            IQueryable<Genre> genreQuery = from g in _context.Genre                                          
-                                            orderby g.GenreName
-                                            select new Genre
-                                            {Id = g.Id, 
-                                             GenreName = g.GenreName};
-           
+            IQueryable<Genre> genreQuery = from g in _context.Genre
+                                           orderby g.GenreName
+                                           select new Genre
+                                           {
+                                               Id = g.Id,
+                                               GenreName = g.GenreName
+                                           };
+
             //Main Query
-            var movies = _context.Movie
-                .Include(m => m.Genre)
-                .Where(m => string.IsNullOrEmpty(title) || m.Title.Contains(title))
-                .Where(m => !movieGenre.HasValue || (m.GenreId == movieGenre.Value))
-                .Where(m => !ReleaseDate_low.HasValue || (m.ReleaseDate >= ReleaseDate_low.Value))
-                .Where(m => !ReleaseDate_high.HasValue || (m.ReleaseDate <= ReleaseDate_high.Value))
-                .Where(m => !Price_Low.HasValue || (m.Price >= Price_Low.Value))
-                .Where(m => !Price_High.HasValue || (m.Price <= Price_High.Value))
-                ;
+            var movies = (IQueryable<Movie>)_context.Movie
+                .Include(m => m.Genre);
+
+            if (gridOptions.FilterList.ContainsKey("title") && !string.IsNullOrWhiteSpace(gridOptions.FilterList["title"]))
+                movies = movies.Where(m => m.Title.Contains(title));
+            int genreId;
+            if (gridOptions.FilterList.ContainsKey("GenreId") && int.TryParse(gridOptions.FilterList["GenreId"], out genreId))
+                movies = movies.Where(m => (m.GenreId == genreId));
+            DateTime dl;
+            if (gridOptions.FilterList.ContainsKey("ReleaseDate_low") && DateTime.TryParse(gridOptions.FilterList["ReleaseDate_low"], out dl))
+                movies = movies.Where(m =>  (m.ReleaseDate >= dl));
+            DateTime dh;
+            if (gridOptions.FilterList.ContainsKey("ReleaseDate_high") && DateTime.TryParse(gridOptions.FilterList["ReleaseDate_high"], out dh))
+                movies = movies.Where(m => (m.ReleaseDate <= dh));
+            int p;
+            if (gridOptions.FilterList.ContainsKey("Price_Low") && int.TryParse(gridOptions.FilterList["Price_Low"], out p))
+                movies = movies.Where(m => (m.Price >= p));     
+            if (gridOptions.FilterList.ContainsKey("Price_High") && int.TryParse(gridOptions.FilterList["Price_High"], out p))
+                movies = movies.Where(m => (m.Price <= p));
+                   
             
 
             // Collect total row count information for pagination
@@ -61,49 +44,26 @@
             var page = (!currentPage.HasValue || currentPage.Value == 0) ? 1 : currentPage.Value;
             gridOptions.PaginationOptions.CurrentPage = page;
 
-            // Add sorting 
-            // One case per column that can be sorted
-            switch(gridOptions.SelectedSort == null?"":gridOptions.SelectedSortName.ToUpper())
-            {
-                case "TITLE":
-                    if(gridOptions.SelectedSortDirection== SortableHeaderTagHelper.SortDirection.Asc)
-                        movies = movies.OrderBy(m => m.Title);
-                    else
-                        movies = movies.OrderByDescending(m => m.Title);
-                    break;
-                case "RELEASEDATE":
-                    if(gridOptions.SelectedSortDirection == SortableHeaderTagHelper.SortDirection.Asc)
-                        movies = movies.OrderBy(m => m.ReleaseDate);
-                    else
-                        movies = movies.OrderByDescending(m => m.ReleaseDate);
-                    break;
-                case "GENREID":
-                    if(gridOptions.SelectedSortDirection== SortableHeaderTagHelper.SortDirection.Asc)
-                        movies = movies.OrderBy(m => m.Genre.GenreName);
-                   else
-                       movies = movies.OrderByDescending(m => m.Genre.GenreName);
-                    break;
-                case "PRICE":
-                    if(gridOptions.SelectedSortDirection== SortableHeaderTagHelper.SortDirection.Asc)
-                        movies = movies.OrderBy(m => m.Price);
-                    else
-                        movies = movies.OrderByDescending(m => m.Price);
-                    break;
-            }
+
+            //Order the data if a sort option is selected
+            if (!String.IsNullOrWhiteSpace(gridOptions.SelectedSortName))
+                movies = movies.OrderBy<Movie>(gridOptions.SelectedSortName
+                    , gridOptions.SelectedSortDirection == SortableHeaderTagHelper.SortDirection.Desc);
+
             List<Movie> movieList;
+            
             // Perform pagination if the page size is set to a positive number
-            if (pageSize.HasValue 
-                && pageSize.Value > 0)
+            if (gridOptions.PaginationOptions.PageSize > 0)
             {
                 movieList = await movies
-                    .Skip((page - 1) * pageSize.Value)
-                    .Take(pageSize.Value)
+                    .Skip((page - 1) * gridOptions.PaginationOptions.PageSize)
+                    .Take(gridOptions.PaginationOptions.PageSize)
                     .ToListAsync();
             }
             else
                 movieList = await movies.ToListAsync();
 
-                
+
 
             var movieGenreVM = new MovieGenreViewModel
             {
@@ -112,6 +72,5 @@
                 CoreGridOptions = gridOptions,
             };
 
-            return View(movieGenreVM);
-        }
+            return View(movieGenreVM);        }
 ```

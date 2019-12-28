@@ -8,9 +8,9 @@ namespace CoreGridFSP.Models
         [Display(Name ="Current Page")]
         public int CurrentPage { get; set; } = 1;
         [Display(Name = "Record Count")]
-        public int Count { get; set; }
+        public int Count { get; set; } = 1;
         [Display(Name ="Page Size")]
-        public int PageSize { get; set; } = 4;
+        public int PageSize { get; set; } = 10;
         [Display(Name ="Total Pages", Description ="Read-Only count of pages available to view" )]
         public int TotalPages => PageSize==0?1:(int)Math.Ceiling(decimal.Divide(Count, PageSize));
 

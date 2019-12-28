@@ -64,7 +64,17 @@ gridOptions.PaginationOptions.Count = movies.Count();
 gridOptions.PaginationOptions.CurrentPage = (!currentPage.HasValue || currentPage.Value == 0) ? 1 : currentPage.Value;
 ```
 
-Use the SelectedSort parameters to build out the EF `OrderBy`
+For simple sorting, where the sortable-headers are all pointing to a model property:
+
+```csharp
+if (!String.IsNullOrWhiteSpace(gridOptions.SelectedSortName))
+    movies = movies.OrderBy<Movie>(gridOptions.SelectedSortName, 
+        gridOptions.SelectedSortDirection == SortableHeaderTagHelper.SortDirection.Desc);
+
+```
+
+
+Use the SelectedSort parameters to build out the EF `OrderBy` if you need custom sorting.
 ```csharp
 
             switch(gridOptions.SelectedSort == null?"":gridOptions.SelectedSortName.ToUpper())
@@ -104,11 +114,12 @@ Adds a Filter Dropdown to a table header for a specific column.
 
 | Attribute | Description |
 |:--|:--|
-| asp-for | The name of the filter. For Range filters, this will be used as the low end |
-| input-type | TextBox, SelectList, DateRange, NumericRange, Checkbox |
+| asp-for | The property in a data model to filter on |
+| input-type | TextBox, SelectList, DateRange, DateTimeRange, NumericRange, Checkbox |
 | CoreGridOptions | A CoreGridFSPOptions object that should be passed in through the view model |
-| asp-for-end | The high or end range filter for range filters |
-
+| asp-items | A kvp select list object with keys and values to display in the dropdown list |
+| high-range-suffix | Used for range filters. The high range suffix is added to the column name. Defaults to "_high" |
+| low-range-suffix | Used for range filters. The low range suffix is added to the column name. Defaults to "_low" |
 
 ## SortableHeaderTagHelper
 Adds sort options to a table header
@@ -126,6 +137,7 @@ New CoreGridOptions will set a default page size and set of allowed page sizes. 
 | Attribute | Description |
 |:--|:--|
 | CoreGridOptions | A CoreGridFSPOptions object that should be passed in through the view model |
+
 
 ### PaginagionOptions
 
@@ -149,6 +161,30 @@ New CoreGridOptions will set a default page size and set of allowed page sizes. 
 | SelectedSortName | The name of the column to sort on |
 | SelectedSortDirection | Asc or Desc |
 | FilterList | Dictionary kvp list with all current filter values | 
+
+# Extensions
+A few extensions are available to make controller-side coding simpler.
+
+## InheritedModelExtensions
+Copies all common properties from one model to another. Useful when creating view models that inherit from data models. 
+To use include the CoreGridFSP.Extensions namespace:
+```csharp
+using CoreGridFSP.Extensions;
+```
+
+## QueryExtensions
+Allows string column names to be used to sort a data set.
+To use include the CoreGridFSP.Extensions namespace:
+```csharp
+using CoreGridFSP.Extensions;
+```
+## ExtractCoreGridOptionsExtensions
+Automatically generates a CoreGridFSPOptions object from the HttpContext of an GET Index() controller.
+To use include the CoreGridFSP.Extensions namespace:
+```csharp
+using CoreGridFSP.Extensions;
+```
+
 
 # Examples
 All examples are based on the [MVCMovies tutorial](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-mvc-app/start-mvc?view=aspnetcore-3.1&tabs=visual-studio) provided by Microsoft.

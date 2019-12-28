@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CoreGridFSP
 {
@@ -162,9 +161,32 @@ namespace CoreGridFSP
                     var slabel = _generator.GenerateLabel(ViewContext, aspFor.ModelExplorer, aspFor.Metadata.Name, null, new { @class = "control-label" });
                     sform_group.InnerHtml.AppendHtml(slabel);
 
-                    var select = _generator.GenerateSelect(ViewContext, aspFor.ModelExplorer, "All", aspFor.Metadata.Name, aspItems, false, null);
+                    var select = new TagBuilder("select");
                     select.AddCssClass("form-control");
+                    select.Attributes.Add("name", displayName);
+                    select.Attributes.Add("id", displayName);
                     select.Attributes.Add("data-role", "select-dropdown");
+                    
+                    var aoption = new TagBuilder("option");
+                    aoption.Attributes.Add("value", "");
+                    aoption.InnerHtml.Append("All");
+
+                    select.InnerHtml.AppendHtml(aoption);
+                    foreach(var item in aspItems)
+                    {
+                        var option = new TagBuilder("option");
+                        option.Attributes.Add("value", item.Value);
+                        option.InnerHtml.Append(item.Text);
+                        if (item.Selected || item.Value.Trim() == Options.FilterList[aspFor.Metadata.Name.Trim()])
+                        {
+                            option.Attributes.Add("selected", "selected");
+                        }
+
+                        select.InnerHtml.AppendHtml(option);
+                    }
+
+                    //var select = _generator.GenerateSelect(ViewContext, aspFor.ModelExplorer, "All", aspFor.Metadata.Name, aspItems, false, null);
+                    
                     sform_group.InnerHtml.AppendHtml(select);
 
                     form.InnerHtml.AppendHtml(sform_group);
