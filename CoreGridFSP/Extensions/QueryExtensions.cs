@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace CoreGridFSP.Extensions
 {
@@ -22,7 +23,7 @@ namespace CoreGridFSP.Extensions
 
             string command = desc ? "OrderByDescending" : "OrderBy";
             var type = typeof(TEntity);
-            var property = type.GetProperty(orderByProperty);
+            var property = type.GetProperty(orderByProperty, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
             if (property == null)
                 return source;
             var parameter = Expression.Parameter(type, "p");
