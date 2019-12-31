@@ -10,13 +10,12 @@
     <PackageTags>core MVC table grid sortable header sorting pagination page</PackageTags>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>CoreGridFSP.snk</AssemblyOriginatorKeyFile>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <RepositoryUrl>https://github.com/bmittenzwey/CoreGridFSP</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageIcon>CoreGridFSP.png</PackageIcon>
     <PackageIconUrl>https://github.com/bmittenzwey/CoreGridFSP/blob/master/CoreGridFSP/Resources/CoreGridFSP.png</PackageIconUrl>
-    <PackageReleaseNotes>Added an action TagHelper
-Query Extensions are case insensitive</PackageReleaseNotes>
+    <PackageReleaseNotes>CoreGridFSPOptions now addes default pagination options on create</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

@@ -7,8 +7,8 @@ namespace CoreGridFSP.Models
 {
     public class CoreGridFSPOptions
     {
-        [Display(Name ="Pagination Options")]
-        public PaginationOptions PaginationOptions { get; set; }
+        [Display(Name = "Pagination Options")]
+        public PaginationOptions PaginationOptions { get; set; } = new PaginationOptions();
         [Display(Name ="Selected Sort")]
         public string SelectedSort 
         {
