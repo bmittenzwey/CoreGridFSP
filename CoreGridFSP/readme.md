@@ -44,7 +44,10 @@ gridOptions.PaginationOptions.Count = movies.Count();
 gridOptions.PaginationOptions.CurrentPage = (!currentPage.HasValue || currentPage.Value == 0) ? 1 : currentPage.Value;
 ```
 
-For simple sorting, where the sortable-headers are all pointing to a model property:
+For simple sorting, where the sortable-headers are all pointing to a model property, use the supplied QueryExtensions:
+```csharp
+using CoreGridFSP.Extensions; 
+```
 
 ```csharp
 if (!String.IsNullOrWhiteSpace(gridOptions.SelectedSortName))
