@@ -17,18 +17,10 @@ Like any other Index controller, you will have to add a parameter for the pagina
 
 ```csharp
         // GET: Movies
-        public async Task<IActionResult> Index(int? currentPage, int? movieGenre, DateTime? fromReleaseDate, DateTime? toReleaseDate, decimal? lowPrice, decimal? highPrice, string searchString, int? pageSize, string selectedSort = "")
+        public async Task<IActionResult> Index()
         {
 ```
-#### If using the pagination options, be sure to include:
-* `int? currentPage`
-* `int? pageSize`
 
-
-#### If using any sorts, be sure to include:
-* `string selectedSort = ""`
-
-#### If using any filters, add a parameter for each filtered column.
 
 Read all the parameters from the function signature into a new `CoreGridFSPOptions` object
 
@@ -36,7 +28,14 @@ Read all the parameters from the function signature into a new `CoreGridFSPOptio
  var gridOptions = this.HttpContext.Request.ExtractCoreGridOptions();
 ```
 
-#### Use the parameters or the FilterList to build out EF `where` clauses
+#### Use the FilterList to build out EF `where` clauses
+```csharp
+if (gridOptions.FilterList.ContainsKey("title") && !string.IsNullOrWhiteSpace(gridOptions.FilterList["title"]))
+                movies = movies.Where(m => m.Title.Contains(gridOptions.FilterList["title"]));
+            int genreId;
+            if (gridOptions.FilterList.ContainsKey("GenreId") && int.TryParse(gridOptions.FilterList["GenreId"], out genreId))
+                movies = movies.Where(m => (m.GenreId == genreId));
+```
 
 #### After filtering the source rows, you can collect some pagination details:
 ```csharp
@@ -56,7 +55,7 @@ if (!String.IsNullOrWhiteSpace(gridOptions.SelectedSortName))
 
 ```
 
-Use the SelectedSort parameters to build out the EF `OrderBy` if you need custom sorting.
+Or use the SelectedSort parameters to build out the EF `OrderBy` if you need custom sorting.
 ```csharp
 
             switch(gridOptions.SelectedSort == null?"":gridOptions.SelectedSortName.ToUpper())
