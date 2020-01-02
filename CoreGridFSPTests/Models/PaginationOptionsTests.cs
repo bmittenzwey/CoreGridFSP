@@ -13,7 +13,7 @@ namespace CoreGridFSP.Extensions.Tests
         public void TotalPagesTest()
         {
             var p = new PaginationOptions();
-            Assert.AreEqual(1, p.TotalPages);
+            Assert.AreEqual(0, p.TotalPages);
             p.Count = 15;
             Assert.AreEqual(2, p.TotalPages);
 

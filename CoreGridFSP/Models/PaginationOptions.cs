@@ -8,7 +8,7 @@ namespace CoreGridFSP.Models
         [Display(Name ="Current Page")]
         public int CurrentPage { get; set; } = 1;
         [Display(Name = "Record Count")]
-        public int Count { get; set; } = 1;
+        public int Count { get; set; } = 0;
         [Display(Name ="Page Size")]
         public int PageSize { get; set; } = 10;
         [Display(Name ="Total Pages", Description ="Read-Only count of pages available to view" )]
