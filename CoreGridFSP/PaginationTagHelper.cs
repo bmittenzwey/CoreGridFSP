@@ -33,7 +33,7 @@ namespace CoreGridFSP
             var ul = new TagBuilder("ul");
             ul.AddCssClass("pagination flex-wrap");
 
-            ul.InnerHtml.AppendHtml(makeButton("|<", "First", options.EnablePrevious, 1, Routes));
+            ul.InnerHtml.AppendHtml(makeButton("|<", "Previous", options.EnablePrevious, 1, Routes));
             ul.InnerHtml.AppendHtml(makeButton("<", "Next", options.EnablePrevious, options.CurrentPage - 1, Routes));
 
             for (var i = 1; i <= options.TotalPages; i++)
@@ -41,7 +41,7 @@ namespace CoreGridFSP
                 ul.InnerHtml.AppendHtml(makeButton(i.ToString(), null, options.CurrentPage != i, i, Routes));
             }
 
-            ul.InnerHtml.AppendHtml(makeButton(">", "Previous", options.EnableNext, options.CurrentPage + 1, Routes));
+            ul.InnerHtml.AppendHtml(makeButton(">", "Next", options.EnableNext, options.CurrentPage + 1, Routes));
             ul.InnerHtml.AppendHtml(makeButton(">|", "Last", options.EnableNext, options.TotalPages, Routes));
 
 
